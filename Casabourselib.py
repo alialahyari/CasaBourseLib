@@ -31,7 +31,7 @@ def get_stock_price(ticker, from_date, to_date):
   df = df.set_index('date')
   return df
 
-def get_madex(periode):
+def get_madex_price(periode):
   if not sys.warnoptions:
     warnings.simplefilter("ignore")
   from pandas.core.common import SettingWithCopyWarning
