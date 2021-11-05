@@ -46,7 +46,7 @@ def get_madex(periode):
   df = df.set_index('date')
   return df
 
-def get_masi(periode):
+def get_masi_price(periode):
   if not sys.warnoptions:
     warnings.simplefilter("ignore")
   from pandas.core.common import SettingWithCopyWarning
@@ -437,3 +437,92 @@ def get_tickers():
   df = pd.read_json(data)
   return df
 
+import pandas as pd 
+from bs4 import BeautifulSoup
+import urllib.request, urllib.parse, urllib.error
+
+def get_masi_data():
+  url='https://www.casablanca-bourse.com/bourseweb/indice-ponderation.aspx?Cat=22&IdLink=298'
+  html = urllib.request.urlopen(url).read()
+
+  soup = BeautifulSoup(html,'html')
+  table = soup.find('table')
+
+  row=list()
+  i=0
+  table_rows = table.find_all('tr')
+  for tr in table_rows:
+    td = tr.find_all('td')
+    row.append([i.text for i in td])
+
+  df = pd.DataFrame( columns = row[358] )  
+
+  data=list()
+  x=0
+  for i in range(360,434):
+      df = df.append(pd.Series(row[i], index=row[358]), ignore_index=True)
+    #df = df.append(pd.Series(['d', 'e'], index=['col1','col2']), ignore_index=True) 
+
+    #data.append(row[i])
+    #df.loc[x]=row[i]
+
+
+  #df = df.append(pd.Series(row[433], index=row[358]), ignore_index=True)
+  df = df.append(pd.Series(['',
+ '',
+ '',
+ 'Total',
+ '',
+ row[434][5],
+ '',
+ '',
+ '',
+ '',
+ '',
+ '',
+ '',
+ row[434][13],
+ '',
+ '',
+ ''], index=row[358]), ignore_index=True) 
+
+
+  #cleaning of data row1
+  df_Instrument= df['Instrument'].str.split('\n\n')
+  df_name=list()
+  for i in range(74):
+      #df.Instrument.iloc[i]=df_Instrument[i][1]
+      df_name.append(df_Instrument[i][1])
+  df_name.append("Total")    
+  df.Instrument=df_name
+  #cleaning of data row2
+  df_name=list()
+  for i in range(75):
+      df_titres=df['Nombre de titres'][i].split('Â\xa0')
+      df_name.append(' '.join(df_titres))
+   
+  #x=[df['Nombre de titres'][38].split('Â\xa0')[0].replace("\xa0", " "),df['Nombre de titres'][38].split('Â\xa0')[1],df['Nombre de titres'][38].split('Â\xa0')[2],df['Nombre de titres'][38].split('Â\xa0')[3]]
+
+  #df_name.append(' '.join(x))
+  df["Nombre de titres"]=df_name
+
+  #cleaning of data row3
+  df_name=list()
+  for i in range(74):
+      df_titres=df.Cours[i].split('Â\xa0')
+      df_name.append(''.join(df_titres))
+  df_name.append('')
+  df.Cours=df_name
+
+  #cleaning of data row4
+
+  df_name=list()
+  df.columns = df.columns.str.strip()
+  for i in range(75):
+      df_titres=df['Capitalisation flottante'][i].split('Â\xa0')
+      df_name.append(' '.join(df_titres))
+    
+  df['Capitalisation flottante']=df_name 
+    
+  return df
+  
