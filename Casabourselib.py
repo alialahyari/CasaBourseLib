@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import sys
 import warnings
 from datetime import datetime
+import urllib.request, urllib.parse, urllib.error
 
 def get_stock_price(ticker, from_date, to_date):
   from_date = from_date[6:]+'-'+from_date[3:5]+'-'+from_date[0:2]
@@ -437,9 +438,7 @@ def get_tickers():
   df = pd.read_json(data)
   return df
 
-import pandas as pd 
-from bs4 import BeautifulSoup
-import urllib.request, urllib.parse, urllib.error
+
 
 def get_masi_data():
   url='https://www.casablanca-bourse.com/bourseweb/indice-ponderation.aspx?Cat=22&IdLink=298'
