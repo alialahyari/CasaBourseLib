@@ -1,11 +1,11 @@
 import requests 
 import pandas as pd   
 import codecs
-import matplotlib.pyplot as plt
 import json
 from bs4 import BeautifulSoup
-import html5lib
-import random
+import sys
+import warnings
+from datetime import datetime
 
 def get_stock_price(ticker, from_date, to_date):
   from_date = from_date[6:]+'-'+from_date[3:5]+'-'+from_date[0:2]
@@ -30,6 +30,21 @@ def get_stock_price(ticker, from_date, to_date):
   df = df.set_index('date')
   return df
 
+def get_madex(periode):
+  if not sys.warnoptions:
+    warnings.simplefilter("ignore")
+  from pandas.core.common import SettingWithCopyWarning
+  warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
+  # par exemple periode = '1m' , '1y' , '5y'
+  url='https://www.leboursier.ma/api?method=getMadexHistory&periode='+str(periode)+'&format=json'
+  r = requests.get(url)
+  data = json.loads(codecs.decode(r.text.encode(), 'utf-8-sig'))
+  df1 = pd.json_normalize(data['result'])
+  df = pd.DataFrame(zip(df1.labels[0], df1.prices[0]),columns =['date','value'])
+  for i in range(len(df.date)):
+    df.date[i]= datetime.fromtimestamp(df.date[i]).strftime('%d/%m/%Y')
+  df = df.set_index('date')
+  return df
 
 def get_masi(periode):
   if not sys.warnoptions:
@@ -47,7 +62,32 @@ def get_masi(periode):
   df = df.set_index('date')
   return df
 
+def get_dividends(ticker):
+  ticker_2_CodeValeur = {"ADH" : "9000" , "AFM" : "12200" , "AFI" : "11700" , "GAZ" : "7100" , "AGM" : "6700" , "ADI" : "11200" , "ALM" : "6600" , "ARD" : "27" , "ATL" : "10300" , "ATW" : "8200" , "ATH" : "3200" , "NEJ" : "7000" , "BAL" : "3300" , "BOA" : "1100" , "BCP" : "8000" , "BCI" : "5100" , "CRS" : "8900" , "CDM" : "3600" , "CDA" : "3900" , "CIH" : "3100" , "CMA" : "4000" , "CMT" : "11000" , "COL" : "9200" , "CSR" : "4100" , "CTM" : "2200" , "DRI" : "8500" , "DLM" : "10800" , "DHO" : "10900" , "DIS" : "4200" , "DWY" : "9700" , "NKL" : "11300" , "EQD" : "2300" , "FBR" : "9300" , "HPS" : "9600" , "IBC" : "7600" , "IMO" : "12" , "INV" : "9500" , "JET" : "11600" , "LBV" : "11100" , "LHM" : "3800" , "LES" : "4800" , "LYD" : "8600" , "M2M" : "10000" , "MOX" : "7200" , "MAB" : "1600" , "MNG" : "7300" , "MLE" : "2500" , "IAM" : "8001" , "MDP" : "6500" , "MIC" : "10600" , "MUT" : "21" , "NEX" : "7400" , "OUL" : "5200" , "PRO" : "9900" , "REB" : "5300" , "RDS" : "12000" , "RISMA" : "8700" , "S2M" : "11800" , "SAH" : "11400" , "SLF" : "10700" , "SAM" : "6800" , "SMI" : "1500" , "SNA" : "10500" , "SNP" : "9400" , "MSA" : "12300" , "SID" : "1300" , "SOT" : "9800" , "SRM" : "2000" , "SBM" : "10400" , "STR" : "11500" , "TQM" : "11900" , "TIM" : "10100" , "TMA" : "12100" , "UMR" : "7500" , "WAA" : "6400" , "ZDJ" : "5800"}
+  url = "https://www.casablanca-bourse.com/bourseweb/Societe-Cote.aspx?codeValeur="+str(ticker_2_CodeValeur[ticker])+"&cat=7"
+  req = requests.get(url)
 
+  soup = BeautifulSoup(req.text, "html.parser")
+
+  view_state = soup.find("input", {"id": "__VIEWSTATE"})['value']
+  view_state_generator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})['value']
+
+  payload = {
+    'TopControl1$ScriptManager1': 'SocieteCotee1$UpdatePanel1|SocieteCotee1$LBFicheTech',
+    '__EVENTTARGET': 'SocieteCotee1$LBDividende',
+    '__EVENTARGUMENT': '',
+    '__LASTFOCUS': '',
+    '__VIEWSTATE': view_state,
+    '__VIEWSTATEGENERATOR': view_state_generator,
+  }
+
+  r = requests.post(url, data=payload)
+  soup = BeautifulSoup(r.text, 'html.parser')
+  divs = soup.find_all('div')
+  df = pd.read_html(str(divs[242]), decimal=',', thousands='.')[6]
+  df = df.set_index('Année')
+  df = df.drop('Unnamed: 0', axis= 1 )
+  return df
 
 def get_indicators(ticker):
   ticker_2_CodeValeur = {"ADH" : "9000" , "AFM" : "12200" , "AFI" : "11700" , "GAZ" : "7100" , "AGM" : "6700" , "ADI" : "11200" , "ALM" : "6600" , "ARD" : "27" , "ATL" : "10300" , "ATW" : "8200" , "ATH" : "3200" , "NEJ" : "7000" , "BAL" : "3300" , "BOA" : "1100" , "BCP" : "8000" , "BCI" : "5100" , "CRS" : "8900" , "CDM" : "3600" , "CDA" : "3900" , "CIH" : "3100" , "CMA" : "4000" , "CMT" : "11000" , "COL" : "9200" , "CSR" : "4100" , "CTM" : "2200" , "DRI" : "8500" , "DLM" : "10800" , "DHO" : "10900" , "DIS" : "4200" , "DWY" : "9700" , "NKL" : "11300" , "EQD" : "2300" , "FBR" : "9300" , "HPS" : "9600" , "IBC" : "7600" , "IMO" : "12" , "INV" : "9500" , "JET" : "11600" , "LBV" : "11100" , "LHM" : "3800" , "LES" : "4800" , "LYD" : "8600" , "M2M" : "10000" , "MOX" : "7200" , "MAB" : "1600" , "MNG" : "7300" , "MLE" : "2500" , "IAM" : "8001" , "MDP" : "6500" , "MIC" : "10600" , "MUT" : "21" , "NEX" : "7400" , "OUL" : "5200" , "PRO" : "9900" , "REB" : "5300" , "RDS" : "12000" , "RISMA" : "8700" , "S2M" : "11800" , "SAH" : "11400" , "SLF" : "10700" , "SAM" : "6800" , "SMI" : "1500" , "SNA" : "10500" , "SNP" : "9400" , "MSA" : "12300" , "SID" : "1300" , "SOT" : "9800" , "SRM" : "2000" , "SBM" : "10400" , "STR" : "11500" , "TQM" : "11900" , "TIM" : "10100" , "TMA" : "12100" , "UMR" : "7500" , "WAA" : "6400" , "ZDJ" : "5800"}
@@ -85,3 +125,315 @@ def get_indicators(ticker):
   df = pd.DataFrame(df).set_index('Chiffres')
 
   return df
+
+def get_tickers():
+  data = """[
+    {
+      "Titre": "Addoha",
+      "Ticker": "ADH"
+    },
+    {
+      "Titre": "AFMA",
+      "Ticker": "AFM"
+    },
+    {
+      "Titre": "Afric Indus.",
+      "Ticker": "AFI"
+    },
+    {
+      "Titre": "Afriquia Gaz",
+      "Ticker": "GAZ"
+    },
+    {
+      "Titre": "Agma",
+      "Ticker": "AGM"
+    },
+    {
+      "Titre": "Alliances",
+      "Ticker": "ADI"
+    },
+    {
+      "Titre": "Aluminium Maroc",
+      "Ticker": "ALM"
+    },
+    {
+      "Titre": "Aradei Capital",
+      "Ticker": "ARD"
+    },
+    {
+      "Titre": "ATLANTASANAD",
+      "Ticker": "ATL"
+    },
+    {
+      "Titre": "AttijariwafaBk",
+      "Ticker": "ATW"
+    },
+    {
+      "Titre": "AutoHall",
+      "Ticker": "ATH"
+    },
+    {
+      "Titre": "Auto Nejma",
+      "Ticker": "NEJ"
+    },
+    {
+      "Titre": "BALIMA",
+      "Ticker": "BAL"
+    },
+    {
+      "Titre": "BANK OF AFRICA",
+      "Ticker": "BOA"
+    },
+    {
+      "Titre": "BCP",
+      "Ticker": "BCP"
+    },
+    {
+      "Titre": "BMCI",
+      "Ticker": "BCI"
+    },
+    {
+      "Titre": "Cartier Saada",
+      "Ticker": "CRS"
+    },
+    {
+      "Titre": "CDM",
+      "Ticker": "CDM"
+    },
+    {
+      "Titre": "Central Danone",
+      "Ticker": "CDA"
+    },
+    {
+      "Titre": "CIH",
+      "Ticker": "CIH"
+    },
+    {
+      "Titre": "Ciments Maroc",
+      "Ticker": "CMA"
+    },
+    {
+      "Titre": "CMT",
+      "Ticker": "CMT"
+    },
+    {
+      "Titre": "Colorado",
+      "Ticker": "COL"
+    },
+    {
+      "Titre": "COSUMAR",
+      "Ticker": "CSR"
+    },
+    {
+      "Titre": "CTM",
+      "Ticker": "CTM"
+    },
+    {
+      "Titre": "Dari Couspate",
+      "Ticker": "DRI"
+    },
+    {
+      "Titre": "DelattreLev.",
+      "Ticker": "DLM"
+    },
+    {
+      "Titre": "DeltaHolding",
+      "Ticker": "DHO"
+    },
+    {
+      "Titre": "DiacSalaf",
+      "Ticker": "DIS"
+    },
+    {
+      "Titre": "DISWAY",
+      "Ticker": "DWY"
+    },
+    {
+      "Titre": "EnnaklN",
+      "Ticker": "NKL"
+    },
+    {
+      "Titre": "EQDOM",
+      "Ticker": "EQD"
+    },
+    {
+      "Titre": "FENIE BROSSETTE",
+      "Ticker": "FBR"
+    },
+    {
+      "Titre": "HPS",
+      "Ticker": "HPS"
+    },
+    {
+      "Titre": "IBMaroc.com",
+      "Ticker": "IBC"
+    },
+    {
+      "Titre": "Immr Invest Br",
+      "Ticker": "IMO"
+    },
+    {
+      "Titre": "INVOLYS",
+      "Ticker": "INV"
+    },
+    {
+      "Titre": "Jet Contractors",
+      "Ticker": "JET"
+    },
+    {
+      "Titre": "LABEL VIE",
+      "Ticker": "LBV"
+    },
+    {
+      "Titre": "Lafarge Holcim",
+      "Ticker": "LHM"
+    },
+    {
+      "Titre": "Lesieur Cristal",
+      "Ticker": "LES"
+    },
+    {
+      "Titre": "Lydec",
+      "Ticker": "LYD"
+    },
+    {
+      "Titre": "M2M Group",
+      "Ticker": "M2M"
+    },
+    {
+      "Titre": "Maghreb Oxygene",
+      "Ticker": "MOX"
+    },
+    {
+      "Titre": "Maghrebail",
+      "Ticker": "MAB"
+    },
+    {
+      "Titre": "Managem",
+      "Ticker": "MNG"
+    },
+    {
+      "Titre": "Maroc Leasing",
+      "Ticker": "MLE"
+    },
+    {
+      "Titre": "Maroc Telecom",
+      "Ticker": "IAM"
+    },
+    {
+      "Titre": "MED PAPER",
+      "Ticker": "MDP"
+    },
+    {
+      "Titre": "MICRODATA",
+      "Ticker": "MIC"
+    },
+    {
+      "Titre": "MUTANDIS",
+      "Ticker": "MUT"
+    },
+    {
+      "Titre": "Nexans Maroc",
+      "Ticker": "NEX"
+    },
+    {
+      "Titre": "Oulmes",
+      "Ticker": "OUL"
+    },
+    {
+      "Titre": "PROMOPHARM",
+      "Ticker": "PRO"
+    },
+    {
+      "Titre": "Rebab Company",
+      "Ticker": "REB"
+    },
+    {
+      "Titre": "Res. Dar Saada",
+      "Ticker": "RDS"
+    },
+    {
+      "Titre": "Risma",
+      "Ticker": "RISMA"
+    },
+    {
+      "Titre": "S2M",
+      "Ticker": "S2M"
+    },
+    {
+      "Titre": "Saham Assurance",
+      "Ticker": "SAH"
+    },
+    {
+      "Titre": "SALAFIN",
+      "Ticker": "SLF"
+    },
+    {
+      "Titre": "SAMIR",
+      "Ticker": "SAM"
+    },
+    {
+      "Titre": "SMI",
+      "Ticker": "SMI"
+    },
+    {
+      "Titre": "SNEP",
+      "Ticker": "SNA"
+    },
+    {
+      "Titre": "REALISATIONS MECANIQUES",
+      "Ticker": "SNP"
+    },
+    {
+      "Titre": "SODEP-MarsaMaroc",
+      "Ticker": "MSA"
+    },
+    {
+      "Titre": "Sonasid",
+      "Ticker": "SID"
+    },
+    {
+      "Titre": "SOTHEMA",
+      "Ticker": "SOT"
+    },
+    {
+      "Titre": "Ste Boissons Maroc",
+      "Ticker": "SRM"
+    },
+    {
+      "Titre": "Stokvis Nord Afr.",
+      "Ticker": "SBM"
+    },
+    {
+      "Titre": "STROC Indus.",
+      "Ticker": "STR"
+    },
+    {
+      "Titre": "TAQA Morocco",
+      "Ticker": "TQM"
+    },
+    {
+      "Titre": "Timar",
+      "Ticker": "TIM"
+    },
+    {
+      "Titre": "TotalMaroc",
+      "Ticker": "TMA"
+    },
+    {
+      "Titre": "Unimer",
+      "Ticker": "UMR"
+    },
+    {
+      "Titre": "WAFA ASSURANCE",
+      "Ticker": "WAA"
+    },
+    {
+      "Titre": "Zellidja",
+      "Ticker": "ZDJ"
+    }
+  ]"""
+
+  df = pd.read_json(data)
+  return df
+
