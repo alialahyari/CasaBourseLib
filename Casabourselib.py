@@ -8,6 +8,7 @@ import warnings
 from datetime import datetime
 import urllib.request, urllib.parse, urllib.error
 
+
 def get_stock_price(ticker, from_date, to_date):
   from_date = from_date[6:]+'-'+from_date[3:5]+'-'+from_date[0:2]
   to_date = to_date[6:]+'-'+to_date[3:5]+'-'+to_date[0:2]
@@ -525,3 +526,225 @@ def get_masi_data():
     
   return df
   
+
+
+def get_madex_data():
+    
+    url = "https://www.casablanca-bourse.com/bourseweb/indice-ponderation.aspx?Cat=22&IdLink=298"
+    req = requests.get(url)
+    soup = BeautifulSoup(req.text, "html.parser")
+    view_state = soup.find("input", {"id": "__VIEWSTATE"})['value']
+    view_state_generator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})['value']
+    payload = {
+  'TopControl1$ScriptManager1': 'Ponderation1$UpdatePanel1|Ponderation1$ImageButton1',
+  '__EVENTTARGET': '',
+  '__EVENTARGUMENT': '',
+  '__LASTFOCUS': '',
+  '__VIEWSTATE': view_state,
+  '__VIEWSTATEGENERATOR': view_state_generator,
+  'TopControl1$TxtRecherche' : '',
+  'TopControl1$txtValeur' : '',
+  'Ponderation1$Marche' : 'RBMadex',
+  'Ponderation1$DateTimeControl1$TBCalendar' : '04/11/2021',
+  'Ponderation1$DateTimeControl2$TBCalendar' : '',
+  'Ponderation1$DateTimeControl3$TBCalendar' : '',
+  'hiddenInputToUpdateATBuffer_CommonToolkitScripts' : '1',
+  '__AjaxControlToolkitCalendarCssLoaded' : '',
+  'Ponderation1$ImageButton1.x' : '3',
+  'Ponderation1$ImageButton1.y' : '17',
+}
+    r = requests.post(url, data=payload)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    table = soup.find_all('table')
+    
+
+    #constuction de nested list pour le sin 
+    result =list()
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBCIsin'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBCIsin1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result.append([soup.find('span', attrs={'id': table_id})])
+        else:
+            result.append([soup.find('span', attrs={'id': id_})])
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBCIsin'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBCIsin1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result.append([soup.find('span', attrs={'id': table_id})])
+        else:
+            result.append([soup.find('span', attrs={'id': id_})])
+
+    #l'ajoutement des libelles pour chaque sin                        
+    x=0
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBLibelle'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBLibelle1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))  
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBLibelle'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBLibelle1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    #l'ajoutement des titres
+    x=0
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBNbreTitre'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBNbreTitre1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))  
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBNbreTitre'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBNbreTitre1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+    #l'ajoutement des Cours
+    x=0
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBCours'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBCours1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))  
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBCours'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBCours1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    #l'ajoutement de facteur flottant
+    x=0
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBFactFlot'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBFactFlot1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))  
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBFactFlot'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBFactFlot1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    #l'ajoutement de Facteur de plafonnement
+    x=0
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBFactPlaf'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBFactPlaf1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))  
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBFactPlaf'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBFactPlaf1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    #l'ajoutement de Capitalisation flottante
+    x=0
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBCapitFlot'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBCapitFlot1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))  
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBCapitFlot'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBCapitFlot1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    #l'ajoutement des Poids
+    x=0
+    for i in range(1, 10):
+        table_id = 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBPoids'
+        id_= 'Ponderation1_RPTLPonderation_ctl0'+str(i)+'_LBPoids1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))  
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+    for i in range(10, 56):
+        table_id = 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBPoids'
+        id_= 'Ponderation1_RPTLPonderation_ctl'+str(i)+'_LBPoids1'
+        if soup.find('span', attrs={'id': table_id})!= None:
+            result[x].append(soup.find('span', attrs={'id': table_id}))
+            x=x+1
+        else:
+            result[x].append(soup.find('span', attrs={'id': id_}))
+            x=x+1
+
+
+    code=list()       
+    for span in result:
+        #print(span[1].text)
+        code.append([span[0].text,span[1].text,span[2].text,span[3].text,span[4].text,span[5].text,span[6].text,span[7].text]) 
+
+    #x = soup.find('span', attrs={'id': 'Ponderation1_RPTLPonderation_ctl56_LBTotalTitre'})      
+    code.append([" ","Total ",soup.find('span', attrs={'id': 'Ponderation1_RPTLPonderation_ctl56_LBTotalTitre'}).text," "," "," ",soup.find('span', attrs={'id':"Ponderation1_RPTLPonderation_ctl56_LBTotalCapitalisation"}).text," "])        
+    columns_=['Code Isin','Instrument','Nombre de titres','Cours','Facteur flottant','Facteur de plafonnement','Capitalisation flottante','Poids']    
+
+    df = pd.DataFrame( columns = columns_ )  
+
+    for i in range(len(code)):
+        df = df.append(pd.Series(code[i], index=columns_), ignore_index=True)
+    #soup.find('span', attrs={'id': 'Ponderation1_RPTLPonderation_ctl56_LBTotalTitre'}).text
+
+    return df
+    
+
