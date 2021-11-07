@@ -440,7 +440,6 @@ def get_tickers():
   return df
 
 
-
 def get_masi_data():
   url='https://www.casablanca-bourse.com/bourseweb/indice-ponderation.aspx?Cat=22&IdLink=298'
   html = urllib.request.urlopen(url).read()
@@ -526,8 +525,6 @@ def get_masi_data():
     
   return df
   
-
-
 def get_madex_data():
     
     url = "https://www.casablanca-bourse.com/bourseweb/indice-ponderation.aspx?Cat=22&IdLink=298"
