@@ -6,10 +6,10 @@ from bs4 import BeautifulSoup
 import sys
 import warnings
 from datetime import datetime
-import urllib.request, urllib.parse, urllib.error
+import urllib
 
 
-def get_stock_price(ticker, from_date, to_date):
+def get_stock_price(ticker_or_isin, from_date, to_date):
   from_date = from_date[6:]+'-'+from_date[3:5]+'-'+from_date[0:2]
   to_date = to_date[6:]+'-'+to_date[3:5]+'-'+to_date[0:2]
   data =  { "ADH": "MA0000011512", "AFM": "MA0000012296", "AFI": "MA0000012114", "GAZ": "MA0000010951", "AGM": "MA0000010944", "ADI": "MA0000011819", "ALM": "MA0000010936",
@@ -25,14 +25,24 @@ def get_stock_price(ticker, from_date, to_date):
  "SNP": "MA0000011728", "MSA": "MA0000012312", "SID": "MA0000010019", "SOT": "MA0000012502", "SRM": "MA0000011595", "SBM": "MA0000010365", "STR": "MA0000012056",
  "TQM": "MA0000012205", "TIM": "MA0000011686", "TMA": "MA0000012262", "UMR": "MA0000012023", "WAA": "MA0000010928", "ZDJ": "MA0000010571"  }
 
-  url='https://www.leboursier.ma/api?method=getPriceHistory&ISIN='+str(data[ticker])+'&format=json&from='+str(from_date)+'&to='+str(to_date)
-  r = requests.get(url)
-  data = json.loads(codecs.decode(r.text.encode(), 'utf-8-sig'))
-  df = pd.json_normalize(data['result'])
-  df = df.set_index('date')
+  if 'MA000' in ticker_or_isin:
+    key_list = list(data.keys())
+    val_list = list(data.values())
+    position = val_list.index(ticker_or_isin)
+    ticker = key_list[position]
+  else:
+    ticker = ticker_or_isin
+  try :
+    url='https://www.leboursier.ma/api?method=getPriceHistory&ISIN='+str(data[ticker])+'&format=json&from='+str(from_date)+'&to='+str(to_date)
+    r = requests.get(url)
+    data = json.loads(codecs.decode(r.text.encode(), 'utf-8-sig'))
+    df = pd.json_normalize(data['result'])
+    df = df.set_index('date')
+  except:
+    print("le ticker ou bien la date n'est pas ecrit correctement, svp de cosulter la liste des ticker en appellont la fct get_tickers() (sans arguments) ")
   return df
 
-def get_madex_price(periode):
+def get_madex(periode):
   if not sys.warnoptions:
     warnings.simplefilter("ignore")
   from pandas.core.common import SettingWithCopyWarning
@@ -48,7 +58,7 @@ def get_madex_price(periode):
   df = df.set_index('date')
   return df
 
-def get_masi_price(periode):
+def get_masi(periode):
   if not sys.warnoptions:
     warnings.simplefilter("ignore")
   from pandas.core.common import SettingWithCopyWarning
@@ -439,7 +449,6 @@ def get_tickers():
   df = pd.read_json(data)
   return df
 
-
 def get_masi_data():
   url='https://www.casablanca-bourse.com/bourseweb/indice-ponderation.aspx?Cat=22&IdLink=298'
   html = urllib.request.urlopen(url).read()
@@ -745,3 +754,5 @@ def get_madex_data():
     return df
     
 
+
+ 
