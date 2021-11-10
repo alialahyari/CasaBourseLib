@@ -238,7 +238,11 @@ cbl.get_stock_price('MA0000011454', '01/01/2017', '18/10/2021')
 <p>1189 rows × 5 columns</p>
 </div>
 
-
+```python
+#Vous pouvez egalement obtenir la data de plusieurs actions en meme temps en dennant une liste de tickers à la fct get_stock_price()
+#Voila un exemple 
+cbl.get_stock_price(['CIH','BCP','CTM','M2M'], '01/01/2021', '10/11/2021')
+```
 
 
 ```python

@@ -9,7 +9,7 @@ from datetime import datetime
 import urllib
 
 
-def get_stock_price(ticker_or_isin, from_date, to_date):
+def get_one_stock_price(ticker_or_isin, from_date, to_date):
   from_date = from_date[6:]+'-'+from_date[3:5]+'-'+from_date[0:2]
   to_date = to_date[6:]+'-'+to_date[3:5]+'-'+to_date[0:2]
   data =  { "ADH": "MA0000011512", "AFM": "MA0000012296", "AFI": "MA0000012114", "GAZ": "MA0000010951", "AGM": "MA0000010944", "ADI": "MA0000011819", "ALM": "MA0000010936",
@@ -41,6 +41,20 @@ def get_stock_price(ticker_or_isin, from_date, to_date):
   except:
     print("le ticker ou bien la date n'est pas ecrit correctement, svp de cosulter la liste des ticker en appellont la fct get_tickers() (sans arguments) ")
   return df
+
+def get_stock_price(tickers_list, from_date, to_date):
+    data=[]
+    if type(tickers_list) == type(data):
+        for ticker in tickers_list:
+          temp = get_one_stock_price(ticker, from_date , to_date)
+          row = temp["value"]
+          data.append(row)
+        data=pd.concat(data,axis=1,sort="False").reindex(data[0].index)
+        data.columns = tickers_list
+        return data
+    else:
+        df1 = get_one_stock_price(tickers_list, from_date, to_date)
+        return df1
 
 def get_madex(periode):
   if not sys.warnoptions:
