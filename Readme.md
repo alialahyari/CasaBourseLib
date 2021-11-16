@@ -1,16 +1,6 @@
-#Casabourselib
-
-
-
-```python
-by Yassine Rhzif & Ahmed Ouaboune 
-https://www.linkedin.com/in/ahmed-ouaboune/
-https://www.linkedin.com/in/Rhzif/
-
-```
-
 <img src="https://raw.githubusercontent.com/RHZIF/CasaBourseLib/main/logo.png" alt="Girl in a jacket">
 
+by <a href="https://www.linkedin.com/in/Rhzif/">Yassine Rhzif</a> et <a href="https://www.linkedin.com/in/ahmed-ouaboune/">Ahmed Ouaboune</a>
 
 ```python
 #pour installer le package veuillez ouvrir votre ligne de commands "CMD" et tapez le code suivant 
