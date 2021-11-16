@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/RHZIF/CasaBourseLib/main/logo.png" alt="Girl in a jacket">
 
-by <a href="https://www.linkedin.com/in/Rhzif/" target="_blank">Yassine Rhzif</a> et <a href="https://www.linkedin.com/in/ahmed-ouaboune/" target="_blank">Ahmed Ouaboune</a>
+by <a href="https://www.linkedin.com/in/Rhzif/" target="_blank">Yassine Rhzif</a> and <a href="https://www.linkedin.com/in/ahmed-ouaboune/" target="_blank">Ahmed Ouaboune</a>
 
 ```python
 #pour installer le package veuillez ouvrir votre ligne de commands "CMD" et tapez le code suivant 
