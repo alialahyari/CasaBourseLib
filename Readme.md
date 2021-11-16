@@ -15,7 +15,7 @@ pip install Casabourselib
 
 ```python
 #c'est comme ca vous pouvez importer le package Casabourselib
-#vous pouvez utilisez n'import quoi a la place de 'cbl' mais fait attention de l'utilisez lorsque vous appellez les fonctions 
+#vous pouvez utilisez n'import quoi a la place de 'cbl' mais fait attention de l'utiliser lorsque vous appellez les fonctions 
 import Casabourselib  as cbl
 ```
 

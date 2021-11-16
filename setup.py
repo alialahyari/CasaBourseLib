@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.21'
+VERSION = '0.0.27'
 DESCRIPTION = 'Like yfinance but for Moroccan stocks'
 LONG_DESCRIPTION = 'A Python package that helps you get stock data from Casablanca stock exchange'
 
