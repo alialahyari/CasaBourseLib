@@ -1,7 +1,7 @@
 
 by <a href="https://www.linkedin.com/in/Rhzif/" target="_blank">Yassine Rhzif</a> and <a href="https://www.linkedin.com/in/ahmed-ouaboune/" target="_blank">Ahmed Ouaboune</a>
 
-Casabourselib est un package Python que nous avons crée lors de nos travaux sur d'autres projets concernant la bourse de Casablanca, nous avons réalisé la difficulté d'obtenir des données à partir du site web officiel de la bourse. nous avons donc eu l'idée de créer un package qui permet d'obtenir des données d'actions cotée en bourse de manière instantanée et en quelques secondes, similairement au package de Yahoo Finance (yfinance).
+CasaBourseLib est un package Python que nous avons crée lors de nos travaux sur d'autres projets concernant la bourse de Casablanca, nous avons réalisé la difficulté d'obtenir des données à partir du site web officiel de la bourse. nous avons donc eu l'idée de créer un package qui permet d'obtenir des données d'actions cotée en bourse de manière instantanée et en quelques secondes, similairement au package de Yahoo Finance (yfinance).
 
 ```python
 #pour installer le package veuillez ouvrir votre ligne de commands "CMD" et tapez le code suivant 
