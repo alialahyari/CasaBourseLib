@@ -1030,7 +1030,9 @@ get_madex_data()
 cbl.get_madex_data()
 #Le resultat est presque similaire au resultat de Masi 
 ```
-
+__________________________________________________________________________________
+Ici vous allez trouver qlq exemples d'application de données fournies par le package 
+__________________________________________________________________________________
 
 
 ```python
