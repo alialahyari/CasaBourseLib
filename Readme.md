@@ -1,11 +1,5 @@
-#Casabourselib
 
-```python
-by Yassine Rhzif & Ahmed Ouaboune 
-https://www.linkedin.com/in/ahmed-ouaboune/
-https://www.linkedin.com/in/Rhzif/
-
-```
+by <a href="https://www.linkedin.com/in/Rhzif/" target="_blank">Yassine Rhzif</a> and <a href="https://www.linkedin.com/in/ahmed-ouaboune/" target="_blank">Ahmed Ouaboune</a>
 
 ```python
 #pour installer le package veuillez ouvrir votre ligne de commands "CMD" et tapez le code suivant 
