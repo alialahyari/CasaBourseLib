@@ -99,7 +99,7 @@ cbl.get_tickers()
   </tbody>
 </table>
 <p>76 rows × 2 columns</p>
-</div>w
+</div>
 
 
 ```python
