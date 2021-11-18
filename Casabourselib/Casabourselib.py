@@ -427,7 +427,7 @@ def get_masi_data():
   url='https://www.casablanca-bourse.com/bourseweb/indice-ponderation.aspx?Cat=22&IdLink=298'
   html = urllib.request.urlopen(url).read()
 
-  soup = BeautifulSoup(html,'html')
+  soup = BeautifulSoup(html,'lxml')
   table = soup.find('table')
 
   row=list()

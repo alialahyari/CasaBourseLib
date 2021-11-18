@@ -1,9 +1,0 @@
-setup.py
-Casabourselib/Casabourselib.py
-Casabourselib/Casabourselib_utility.py
-Casabourselib/__init__.py
-Casabourselib.egg-info/PKG-INFO
-Casabourselib.egg-info/SOURCES.txt
-Casabourselib.egg-info/dependency_links.txt
-Casabourselib.egg-info/requires.txt
-Casabourselib.egg-info/top_level.txt
