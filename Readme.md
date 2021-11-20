@@ -1,8 +1,7 @@
 <img src="logo.png" alt="Girl in a jacket">
 
-by <a href="https://www.linkedin.com/in/Rhzif/" target="_blank">Yassine Rhzif</a> and <a href="https://www.linkedin.com/in/ahmed-ouaboune/" target="_blank">Ahmed Ouaboune</a>
+by <a href="https://www.linkedin.com/in/Rhzif/" target="_blank">Yassine Rhzif</a> and <a href="https://www.linkedin.com/in/ahmed-ouaboune/" target="_blank">Ahmed Ouaboune</a> at <a href="https://www.linkedin.com/company/tacensaa/" target="_blank">Traders & Analysts Club ENSA Agadir</a> 
 
-at <a href="https://www.linkedin.com/company/tacensaa/" target="_blank">Traders & Analysts Club ENSA Agadir</a> 
 CasaBourseLib est un package Python que nous avons crée lors de nos travaux sur d'autres projets concernant la bourse de Casablanca, nous avons réalisé la difficulté d'obtenir des données à partir du site web officiel de la bourse. nous avons donc eu l'idée de créer un package qui permet d'obtenir des données d'actions cotée en bourse de manière instantanée et en quelques secondes, similairement au package de Yahoo Finance (yfinance).
 
 ```python
