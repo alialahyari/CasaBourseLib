@@ -1,4 +1,4 @@
-<img src="logo.png" alt="Girl in a jacket">
+<img src="logo.png" alt="Logo"> <img src="tac.jpg" alt="Logo de Tac">
 
 by <a href="https://www.linkedin.com/in/Rhzif/" target="_blank">Yassine Rhzif</a> and <a href="https://www.linkedin.com/in/ahmed-ouaboune/" target="_blank">Ahmed Ouaboune</a> at <a href="https://www.linkedin.com/company/tacensaa/" target="_blank">Traders & Analysts Club ENSA Agadir</a> 
 
